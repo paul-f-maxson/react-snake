@@ -15,10 +15,13 @@ export const Display = styled.div`
   margin: 10px;
 `;
 
-const LitPixel = styled.div`
-  grid-column: ${props => props.col};
-  grid-row: ${props => props.row};
-`;
+// NOTE: Using attrs with a style factory fn here because row and col change a lot. This way, new class name will not be generated each time the pixel moves.
+const LitPixel = styled.div.attrs({
+  style: ({ row, col }) => ({
+    gridColumn: col,
+    gridRow: row,
+  }),
+})``;
 
 export const BlackPixel = styled(LitPixel)`
   background-color: black;
@@ -26,4 +29,8 @@ export const BlackPixel = styled(LitPixel)`
 
 export const RedPixel = styled(LitPixel)`
   background-color: red;
+`;
+
+export const GreenPixel = styled(LitPixel)`
+  background-color: green;
 `;
