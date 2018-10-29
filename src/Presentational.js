@@ -1,9 +1,18 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const Display = styled.div`
   display: grid;
-  grid-template-columns: repeat(10, 10px);
-  grid-template-rows: repeat(10, 10px);
+  width: ${props => props.width * 10}px
+  grid-template-columns: repeat(
+    ${props => props.width},
+    10px
+  );
+  grid-template-rows: repeat(
+    ${props => props.height},
+    10px
+  );
+  border: 5px solid blue;
+  margin: 10px;
 `;
 
 const LitPixel = styled.div`
