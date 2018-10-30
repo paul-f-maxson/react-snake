@@ -11,13 +11,13 @@ const moveSnakeFn = lengthen => {
     displayWidth,
     displayHeight
   ) {
-    // Make a 1-level-deep copy of the first elem of snake
+    // Makes a 1-level-deep copy of the first elem of snake
     let newHead = Object.assign({}, snake[0]);
     // Move the head
     newHead.x = newHead.x + xMove;
     newHead.y = newHead.y + yMove;
 
-    // Wrap Snake to screen
+    // Wraps Snake to screen
     if (newHead.x > displayWidth) newHead.x = 1;
 
     if (newHead.x < 0) newHead.x = displayWidth;
@@ -26,7 +26,7 @@ const moveSnakeFn = lengthen => {
 
     if (newHead.y < 0) newHead.y = displayHeight;
 
-    // Make a 1-level-deep copy of the snake, possibly dropping the last element
+    // Makes a 1-level-deep copy of the snake, possibly dropping the last element
     const newBody = specialSlice(snake).map(elem =>
       Object.assign({}, elem)
     );
@@ -45,6 +45,7 @@ export function chooseNewDirection(
   currentXMove,
   currentYMove
 ) {
+  // TODO: 180 degree turns should be impossible
   switch (key) {
     case 'ArrowUp':
       return { yMove: -1, xMove: 0 };

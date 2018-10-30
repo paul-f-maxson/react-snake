@@ -13,36 +13,72 @@ import {
   newAppleLoc,
 } from './utilities.js';
 
+const FRAMES_PER_SECOND = 30;
+
+const defaultConsts = {
+  FRAME_LENGTH: 1000 / FRAMES_PER_SECOND,
+  DISPLAY_WIDTH: 40,
+  DISPLAY_HEIGHT: 50,
+};
+
+function defaultState(displayWidth, displayheight) {
+  // TODO: Snake starts at random location
+  const snakeLocs = [
+    { x: 4, y: 1 },
+    { x: 3, y: 1 },
+    { x: 2, y: 1 },
+    { x: 1, y: 1 },
+  ];
+
+  const appleLoc = newAppleLoc(
+    displayWidth,
+    displayheight,
+    snakeLocs
+  );
+
+  return {
+    xMove: 1,
+    yMove: 0,
+    snakeLocs: snakeLocs,
+    appleLoc: appleLoc,
+  };
+}
+
 export default class App extends Component {
   constructor(props) {
     super(props);
 
-    this.FRAMES_PER_SECOND = 30;
-    this.FRAME_LENGTH = 1000 / this.FRAMES_PER_SECOND;
-    this.DISPLAY_WIDTH = 40;
-    this.DISPLAY_HEIGHT = 50;
+    Object.assign(this, defaultConsts);
 
-    const snakeLocs = [
-      { x: 4, y: 1 },
-      { x: 3, y: 1 },
-      { x: 2, y: 1 },
-      { x: 1, y: 1 },
-    ];
-
-    const appleLoc = newAppleLoc(
+    this.state = defaultState(
       this.DISPLAY_WIDTH,
-      this.DISPLAY_HEIGHT,
-      snakeLocs
+      this.DISPLAY_HEIGHT
     );
 
-    this.state = {
-      xMove: 1,
-      yMove: 0,
-      snakeLocs: snakeLocs,
-      appleLoc: appleLoc,
-    };
+    this.changeSnakeTravelDirection = this.changeSnakeTravelDirection.bind(
+      this
+    );
+  }
 
-    this.changeDirection = this.changeDirection.bind(this);
+  componentDidMount() {
+    // Set up main update loop
+    this.timerID = setInterval(
+      () => this.tick(),
+      this.FRAME_LENGTH
+    );
+
+    window.addEventListener(
+      'keydown',
+      this.changeSnakeTravelDirection
+    );
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerID);
+    window.removeEventListener(
+      'keydown',
+      this.changeSnakeTravelDirection
+    );
   }
 
   moveApple() {
@@ -53,32 +89,13 @@ export default class App extends Component {
     );
   }
 
-  componentDidMount() {
-    this.timerID = setInterval(
-      () => this.tick(),
-      this.FRAME_LENGTH
-    );
-
-    window.addEventListener(
-      'keydown',
-      this.changeDirection
-    );
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.timerID);
-    window.removeEventListener(
-      'keydown',
-      this.changeDirection
-    );
-  }
-
-  changeDirection(e) {
+  changeSnakeTravelDirection(e) {
     this.setState(state =>
       chooseNewDirection(e.key, state.xMove, state.yMove)
     );
   }
 
+  // Main update loop
   tick() {
     this.setState(state => {
       // new Apple location defaults to original location
@@ -90,6 +107,10 @@ export default class App extends Component {
         moveFn = moveSnakeAndLengthen;
         newAppleLoc = this.moveApple();
       } else moveFn = moveSnake;
+
+      // TODO: Handle the event that the Snake head encounters its own body
+
+      // TODO: Handle the event that the Snake head encounters the wall
 
       return {
         snakeLocs: moveFn(
@@ -105,22 +126,26 @@ export default class App extends Component {
   }
 
   render() {
-    // Pixels for the Snake
-    const headCoords = this.state.snakeLocs[0];
+    // Pixel for the Snake head
+    const headLoc = this.state.snakeLocs[0];
     const head = (
-      <RedPixel col={headCoords.x} row={headCoords.y} />
+      <RedPixel col={headLoc.x} row={headLoc.y} />
     );
-    const body = this.state.snakeLocs
+
+    // Pixels for the Snake body
+    const bodyLocs = this.state.snakeLocs
       .slice(1)
       .map((segment, index) => (
         <BlackPixel
           col={segment.x}
           row={segment.y}
-          key={`body-${index}-(${segment.x}, ${segment.y})`}
+          key={`bodyLocs-${index}-(${segment.x}, ${
+            segment.y
+          })`}
         />
       ));
 
-    // Pixels for the Apple
+    // Pixel for the Apple
     const apple = (
       <GreenPixel
         col={this.state.appleLoc.x}
@@ -135,7 +160,7 @@ export default class App extends Component {
       >
         {apple}
         {head}
-        {body}
+        {bodyLocs}
       </Display>
     );
   }

@@ -23,6 +23,7 @@ const LitPixel = styled.div.attrs({
   }),
 })``;
 
+// TODO: make this look nicer
 export const BlackPixel = styled(LitPixel)`
   background-color: black;
 `;
