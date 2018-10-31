@@ -40,24 +40,22 @@ const moveSnakeFn = lengthen => {
 export const moveSnakeAndLengthen = moveSnakeFn(true);
 export const moveSnake = moveSnakeFn(false);
 
-export function chooseNewDirection(
-  key,
-  currentXMove,
-  currentYMove
-) {
-  // TODO: 180 degree turns should be impossible
-  switch (key) {
-    case 'ArrowUp':
-      return { yMove: -1, xMove: 0 };
-    case 'ArrowDown':
-      return { yMove: 1, xMove: 0 };
-    case 'ArrowRight':
-      return { xMove: 1, yMove: 0 };
-    case 'ArrowLeft':
-      return { xMove: -1, yMove: 0 };
-    default:
-      return null;
-  }
+export function chooseNewDirection(key, currentMove) {
+  // choose new x and y directions based on the key passed using this lookup table
+  const newMove = {
+    ArrowUp: { xMove: 0, yMove: -1 },
+    ArrowDown: { xMove: 0, yMove: 1 },
+    ArrowRight: { xMove: 1, yMove: 0 },
+    ArrowLeft: { xMove: -1, yMove: 0 },
+  }[key];
+
+  // If the key passed was not in the table or if the new direction is a 180 degree turn from the current direction, return the current move parameters
+
+  return !newMove ||
+    newMove.yMove === -1 * currentMove.yMove ||
+    newMove.xMove === -1 * currentMove.xMove
+    ? currentMove
+    : newMove;
 }
 
 export const newAppleLoc = (maxX, maxY, snakeLocs) => {

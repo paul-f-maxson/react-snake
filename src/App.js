@@ -18,7 +18,7 @@ const FRAMES_PER_SECOND = 30;
 const defaultConsts = {
   FRAME_LENGTH: 1000 / FRAMES_PER_SECOND,
   DISPLAY_WIDTH: 40,
-  DISPLAY_HEIGHT: 50,
+  DISPLAY_HEIGHT: 40,
 };
 
 function defaultState(displayWidth, displayheight) {
@@ -91,7 +91,10 @@ export default class App extends Component {
 
   changeSnakeTravelDirection(e) {
     this.setState(state =>
-      chooseNewDirection(e.key, state.xMove, state.yMove)
+      chooseNewDirection(e.key, {
+        xMove: state.xMove,
+        yMove: state.yMove,
+      })
     );
   }
 
